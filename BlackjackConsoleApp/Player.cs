@@ -6,12 +6,14 @@ namespace BlackjackConsoleApp
 	public class Player
 	{
 		public List<Card> Hand { get; set; }
-		public string Name { get; set;  }
+		public string Name { get; set; }
+        public bool HasBlackjack { get; set; }
 
-		public Player(string name)
+        public Player(string name)
 		{
 			Name = name;
 			Hand = new();
+			HasBlackjack = false;
 		}
 
 		public int GetValueOfHand()

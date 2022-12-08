@@ -23,14 +23,18 @@ namespace BlackjackConsoleApp
             Console.WriteLine("Spiller to: " + playerTwoName);
             Console.WriteLine("Trykk ein knapp for å spill.");
             Console.ReadKey();
-            Console.Clear();
-
 
             Game game = new(playerOneName: playerOneName, playerTwoName: playerTwoName);
-            game.GameLoop();
 
-            Console.WriteLine("\nTrykk ein knapp for å avslutte.");
-            Console.ReadKey();
+            do
+            {
+                Console.Clear();
+                game.GameLoop();
+
+                Console.Write("\n\nPress <Enter> om du vil spille på nytt eller hvilken som helst knapp for å avslutte!");
+            }
+            while (Console.ReadKey().Key == ConsoleKey.Enter);
+
             Environment.Exit(0);
         }
     }

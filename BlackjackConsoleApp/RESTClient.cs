@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -13,7 +14,11 @@ namespace BlackjackConsoleApp
         /// </summary>
         private static void SetupRESTClient()
         {
-            client.BaseAddress = new Uri("https://blackjack.labs.nais.io");
+            if (client.BaseAddress == null)
+            {
+                client.BaseAddress = new Uri("https://blackjack.labs.nais.io");
+            }
+
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json")

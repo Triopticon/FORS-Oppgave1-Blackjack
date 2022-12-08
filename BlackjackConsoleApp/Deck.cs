@@ -51,9 +51,10 @@ namespace BlackjackConsoleApp
             {
                 _deckOfCards = RESTClient.GetCardsAsync().Result;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Console.WriteLine("Could not retrive deck from server.");
+                Console.WriteLine(e.Message);
                 Console.WriteLine("Initilizing local deck.");
                 string fileName = "DeckOfCards.json";
                 string jsonString = File.ReadAllText(fileName);

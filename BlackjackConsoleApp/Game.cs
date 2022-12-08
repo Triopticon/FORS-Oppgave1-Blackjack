@@ -3,7 +3,7 @@ namespace BlackjackConsoleApp
 {
 	public class Game
 	{
-        private const string GameVersion = "v1.0";
+        private const string GameVersion = "v1.1";
 
         public const int BlackjackValue = 21;
 		public const int stopDrawingCardAtValue = 17;
@@ -27,18 +27,30 @@ namespace BlackjackConsoleApp
         {
             InitializeHands();
 
-            while (!playerOne.IsBlackjack()
-                   && playerOne.GetValueOfHand() < Game.stopDrawingCardAtValue)
+            if (!CheckBlackjack())
             {
-                playerOne.Hand.Add(deckOfCards.DrawCard());
+                bool skipPlayerTwo = false;
+                while (!playerOne.IsBlackjack()
+                       && playerOne.GetValueOfHand() < Game.stopDrawingCardAtValue)
+                {
+                    playerOne.Hand.Add(deckOfCards.DrawCard());
+
+                    if (playerOne.GetValueOfHand() >= Game.BlackjackValue)
+                    {
+                        skipPlayerTwo = true;
+                        break;
+                    }
+                }
+
+                while (!skipPlayerTwo
+                       && !playerTwo.IsBlackjack()
+                       && playerTwo.GetValueOfHand() <= playerOne.GetValueOfHand())
+                {
+                    playerTwo.Hand.Add(deckOfCards.DrawCard());
+                }
             }
 
-            while (!playerTwo.IsBlackjack()
-                   && playerTwo.GetValueOfHand() <= playerOne.GetValueOfHand())
-            {
-                playerTwo.Hand.Add(deckOfCards.DrawCard());
-            }
-
+            CheckBlackjack();
             WriteResultsToConsole();
         }
 
@@ -47,11 +59,40 @@ namespace BlackjackConsoleApp
             deckOfCards.Initialize();
             playerOne.Hand = deckOfCards.DealHand();
             playerTwo.Hand = deckOfCards.DealHand();
+            playerOne.HasBlackjack = false;
+            playerTwo.HasBlackjack = false;
+        }
+
+        private static bool CheckBlackjack()
+        {
+            bool playerOneHasBlackjack = playerOne.GetValueOfHand() == Game.BlackjackValue;
+            bool playerTwoHasBlackjack = playerTwo.GetValueOfHand() == Game.BlackjackValue;
+
+            if (playerOneHasBlackjack)
+            {
+                playerOne.HasBlackjack = true;
+                return true;
+            }
+            else if (playerTwoHasBlackjack)
+            {
+                playerTwo.HasBlackjack = true;
+                return true;
+            }
+
+            return false;
         }
 
         private static string CheckWinner()
         {
-            if (playerTwo.GetValueOfHand() > Game.BlackjackValue)
+            if (playerOne.HasBlackjack)
+            {
+                return playerOne.Name;
+            }
+            else if (playerTwo.HasBlackjack)
+            {
+                return playerTwo.Name;
+            }
+            else if(playerTwo.GetValueOfHand() > Game.BlackjackValue)
             {
                 return playerOne.Name;
             }
@@ -73,6 +114,12 @@ namespace BlackjackConsoleApp
             Console.Write(" | ");
             Console.ResetColor();
             playerOne.PrintHandToConsole();
+            if (playerOne.HasBlackjack)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.Write(" - Blackjack");
+                Console.ResetColor();
+            }
             Console.WriteLine();
 
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -83,6 +130,12 @@ namespace BlackjackConsoleApp
             Console.Write(" | ");
             Console.ResetColor();
             playerTwo.PrintHandToConsole();
+            if (playerTwo.HasBlackjack)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.Write(" - Blackjack");
+                Console.ResetColor();
+            }
             Console.WriteLine();
         }
     }
